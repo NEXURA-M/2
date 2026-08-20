@@ -2,20 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Nexura Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexura Subdomain Portal</title>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: #1e293b; padding: 30px; border-radius: 12px; width: 400px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        h2 { color: #38bdf8; }
-        a { display: block; background: #0f172a; color: #38bdf8; padding: 10px; margin: 10px 0; border-radius: 6px; text-decoration: none; border: 1px solid #334155; font-weight: bold; }
-        a:hover { background: #1e293b; border-color: #38bdf8; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); width: 450px; text-align: center; }
+        h2 { color: #38bdf8; margin-top: 0; }
+        p { color: #94a3b8; font-size: 14px; }
+        .link-list { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .link-card { background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: white; transition: 0.2s; }
+        .link-card:hover { border-color: #38bdf8; background: #1e293b; }
+        .subdomain { font-weight: bold; color: #38bdf8; font-size: 14px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>🌐 Nexura Pages</h2>
-        <!-- Target page links -->
-        <a href="./nexura.html">Nexura Page (nexura.html)</a>
+
+<div class="card">
+    <h2>🌐 Nexura Subdomains Portal</h2>
+    <p>Aapke custom subdomains ki list:</p>
+
+    <div class="link-list">
+        <!-- 1. Nexura Subdomain Link -->
+        <a href="http://nexura.m--t.duckdns.org" class="link-card" target="_blank">
+            <span>File: <code>nexura.html</code></span>
+            <span class="subdomain">nexura.m--t.duckdns.org ↗</span>
+        </a>
+
+        <!-- 2. Web Subdomain Link -->
+        <a href="http://web.m--t.duckdns.org" class="link-card" target="_blank">
+            <span>File: <code>web.html</code></span>
+            <span class="subdomain">web.m--t.duckdns.org ↗</span>
+        </a>
+
+        <!-- Jab bhi koi nayi file banayein, yahan naya link add kar dein: -->
+        <!-- 
+        <a href="http://portfolio.m--t.duckdns.org" class="link-card" target="_blank">
+            <span>File: <code>portfolio.html</code></span>
+            <span class="subdomain">portfolio.m--t.duckdns.org ↗</span>
+        </a> 
+        -->
     </div>
+</div>
+
 </body>
 </html>
