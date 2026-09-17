@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LYRAMOON AI - Multi-Server Network</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #030712;
+            --card-bg: rgba(17, 24, 39, 0.6);
+            --primary-accent: #8b5cf6;
+            --secondary-accent: #ec4899;
+            --cyan-accent: #06b6d4;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .glow-1 {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(60px);
+        }
+
+        .glow-2 {
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(60px);
+        }
+
+        /* Header Layout */
+        header {
+            padding: 2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 30%, var(--primary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--primary-accent);
+            -webkit-text-fill-color: initial;
+        }
+
+        .creator-tag {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            letter-spacing: 0.5px;
+        }
+
+        .creator-tag span {
+            color: var(--cyan-accent);
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 1.5rem;
+            flex-grow: 1;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(139, 92, 246, 0.1);
+            color: #c084fc;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.2rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            max-width: 900px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #a855f7, #ec4899, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+            color: var(--text-muted);
+            max-width: 650px;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        /* 4 Buttons Grid */
+        .server-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            width: 100%;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        .chat-btn {
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 18px 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-btn:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary-accent);
+            box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.4);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+        }
+
+        .btn-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-info i {
+            font-size: 1.2rem;
+            color: var(--cyan-accent);
+        }
+
+        .chat-btn i.arrow-icon {
+            transition: transform 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        .chat-btn:hover i.arrow-icon {
+            transform: translateX(4px);
+            color: #fff;
+        }
+
+        /* Loader */
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer strong {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow-1"></div>
+    <div class="glow-2"></div>
+
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-moon"></i> LYRAMOON AI
+        </div>
+        <div class="creator-tag">
+            Created by <span>Muhammad Taqi</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="badge">
+            <i class="fa-solid fa-network-wired"></i> Multi-Server AI Network
+        </div>
+        
+        <h1 class="hero-title">
+            Select Your Preferred <br>
+            <span class="gradient-text">LYRAMOON AI Node</span>
+        </h1>
+        
+        <p class="hero-description">
+            Choose any server below to connect with live instances automatically fetched from raw markdown configurations.
+        </p>
+
+        <!-- 4 Action Buttons -->
+        <div class="server-grid">
+            
+            <!-- Button 1 -->
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/mustjabmalik51214-web/LYRAMOON/refs/heads/main/README.md', this)">
+                <div class="btn-info">
+                    <i class="fa-solid fa-server"></i>
+                    <span class="btn-text">SERVER 1</span>
+                </div>
+                <i class="fa-solid fa-arrow-right arrow-icon"></i>
+                <div class="spinner"></div>
+            </button>
+
+            <!-- Button 2 -->
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/muhammadtaqi512q-oss/TEST/refs/heads/main/README.md', this)">
+                <div class="btn-info">
+                    <i class="fa-solid fa-flask"></i>
+                    <span class="btn-text">SERVER 2 </span>
+                </div>
+                <i class="fa-solid fa-arrow-right arrow-icon"></i>
+                <div class="spinner"></div>
+            </button>
+
+            <!-- Button 3 -->
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/NEXURA-M/PYTHON/refs/heads/main/README.md', this)">
+                <div class="btn-info">
+                    <i class="fa-brands fa-python"></i>
+                    <span class="btn-text">SERVER 3 </span>
+                </div>
+                <i class="fa-solid fa-arrow-right arrow-icon"></i>
+                <div class="spinner"></div>
+            </button>
+
+            <!-- Button 4 -->
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/NEXURA-M/A/refs/heads/main/README.md', this)">
+                <div class="btn-info">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span class="btn-text">SERVER 4 </span>
+                </div>
+                <i class="fa-solid fa-arrow-right arrow-icon"></i>
+                <div class="spinner"></div>
+            </button>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 <strong>LYRAMOON AI</strong>. All rights reserved. Crafted by <strong>Muhammad Taqi</strong>.</p>
+    </footer>
+
+    <script>
+        async function fetchAndRedirect(rawUrl, btnElement) {
+            const btnText = btnElement.querySelector('.btn-text');
+            const arrowIcon = btnElement.querySelector('.arrow-icon');
+            const spinner = btnElement.querySelector('.spinner');
+            
+            const originalText = btnText.textContent;
+
+            // Loading state for clicked button
+            btnText.textContent = "Connecting...";
+            arrowIcon.style.display = "none";
+            spinner.style.display = "block";
+            btnElement.style.pointerEvents = "none";
+
+            // Add timestamp to disable cache
+            const freshUrl = rawUrl + "?t=" + new Date().getTime();
+
+            try {
+                const response = await fetch(freshUrl);
+                if (!response.ok) throw new Error("Could not fetch RAW README");
+
+                const text = await response.text();
+
+                // Regex matches URL after **Active URL:** (Markdown or Plain Text format)
+                const markdownRegex = /\*\*Active URL:\*\*\s*\[.*?\]\((https?:\/\/[^\s\)]+)\)/i;
+                const plainRegex = /\*\*Active URL:\*\*\s*(https?:\/\/[^\s]+)/i;
+
+                let match = text.match(markdownRegex) || text.match(plainRegex);
+
+                if (match && match[1]) {
+                    const activeLink = match[1].trim();
+                    window.location.href = activeLink;
+                } else {
+                    alert("Active URL missing in this server's README!");
+                    resetBtn(btnElement, originalText);
+                }
+
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                alert("Server down or network error!");
+                resetBtn(btnElement, originalText);
+            }
+        }
+
+        function resetBtn(btnElement, text) {
+            const btnText = btnElement.querySelector('.btn-text');
+            const arrowIcon = btnElement.querySelector('.arrow-icon');
+            const spinner = btnElement.querySelector('.spinner');
+
+            btnText.textContent = text;
+            arrowIcon.style.display = "inline-block";
+            spinner.style.display = "none";
+            btnElement.style.pointerEvents = "auto";
+        }
+    </script>
+</body>
+</html>
