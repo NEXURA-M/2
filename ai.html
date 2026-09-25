@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -157,7 +154,7 @@
             line-height: 1.6;
         }
 
-        /* 4 Buttons Grid */
+        /* Server Buttons Grid */
         .server-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -230,7 +227,7 @@
 
         /* Footer */
         footer {
-            padding: 2rem 5%;
+            padding: 2rem 5%; 
             text-align: center;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             color: var(--text-muted);
@@ -270,62 +267,104 @@
             Choose any server below to connect with live instances automatically fetched from raw markdown configurations.
         </p>
 
-        <!-- 4 Action Buttons -->
+        <!-- 10 Action Buttons -->
         <div class="server-grid">
             
             <!-- Button 1 -->
             <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/mustjabmalik51214-web/LYRAMOON/refs/heads/main/README.md', this)">
                 <div class="btn-info">
                     <i class="fa-solid fa-server"></i>
-                    <span class="btn-text">SERVER 1</span>
+                    <span class="btn-text">LYRAMOON V1</span>
                 </div>
                 <i class="fa-solid fa-arrow-right arrow-icon"></i>
                 <div class="spinner"></div>
             </button>
 
             <!-- Button 2 -->
-            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/muhammadtaqi512q-oss/TEST/refs/heads/main/README.md', this)">
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/mustjabmalik51214-web/cartoon-ai/refs/heads/main/README.md', this)">
                 <div class="btn-info">
                     <i class="fa-solid fa-flask"></i>
-                    <span class="btn-text">SERVER 2 </span>
+                    <span class="btn-text">LYRAMOON V2</span>
                 </div>
                 <i class="fa-solid fa-arrow-right arrow-icon"></i>
                 <div class="spinner"></div>
             </button>
 
             <!-- Button 3 -->
-            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/NEXURA-M/PYTHON/refs/heads/main/README.md', this)">
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/mustjabmalik51214-web/LYRA/refs/heads/main/README.md', this)">
                 <div class="btn-info">
                     <i class="fa-brands fa-python"></i>
-                    <span class="btn-text">SERVER 3 </span>
+                    <span class="btn-text">LYRAMOON V3</span>
                 </div>
                 <i class="fa-solid fa-arrow-right arrow-icon"></i>
                 <div class="spinner"></div>
             </button>
 
             <!-- Button 4 -->
-            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/NEXURA-M/A/refs/heads/main/README.md', this)">
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/muhammadtaqi512q-oss/TEST/refs/heads/main/README.md', this)">
                 <div class="btn-info">
                     <i class="fa-solid fa-bolt"></i>
-                    <span class="btn-text">SERVER 4 </span>
+                    <span class="btn-text">LYRAMOON V4</span>
                 </div>
                 <i class="fa-solid fa-arrow-right arrow-icon"></i>
                 <div class="spinner"></div>
             </button>
+
             <!-- Button 5 -->
-            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/mustjabmalik51214-web/cartoon-ai/refs/heads/main/README.md', this)">
-                <div class="btn-info">
-                    <i class="fa-solid fa-bolt"></i>
-                    <span class="btn-text">SERVER 5 </span>
-                </div>
-                <i class="fa-solid fa-arrow-right arrow-icon"></i>
-                <div class="spinner"></div>
-            </button>
-            <!-- Button 6 -->
             <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/muhammadtaqi512q-oss/login-process/refs/heads/main/README.md', this)">
                 <div class="btn-info">
-                    <i class="fa-solid fa-bolt"></i>
-                    <span class="btn-text">SERVER 6 </span>
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span class="btn-text">LYRAMOON V5</span>
+                </div>
+                <i class="fa-solid fa-arrow-right arrow-icon"></i>
+                <div class="spinner"></div>
+            </button>
+
+            <!-- Button 6 -->
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/muhammadtaqi512q-oss/AC/refs/heads/main/README.md', this)">
+                <div class="btn-info">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span class="btn-text">LYRAMOON V6</span>
+                </div>
+                <i class="fa-solid fa-arrow-right arrow-icon"></i>
+                <div class="spinner"></div>
+            </button>
+
+            <!-- Button 7 -->
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/muhammadtaqi512q-oss/muhammad-taqi/refs/heads/main/README.md', this)">
+                <div class="btn-info">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                    <span class="btn-text">LYRAMOON V7</span>
+                </div>
+                <i class="fa-solid fa-arrow-right arrow-icon"></i>
+                <div class="spinner"></div>
+            </button>
+
+            <!-- Button 8 -->
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/muhammadtaqi512q-oss/1/refs/heads/main/README.md', this)">
+                <div class="btn-info">
+                    <i class="fa-solid fa-hashtag"></i>
+                    <span class="btn-text">LYRAMOON V8</span>
+                </div>
+                <i class="fa-solid fa-arrow-right arrow-icon"></i>
+                <div class="spinner"></div>
+            </button>
+
+            <!-- Button 9 -->
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/NEXURA-M/PYTHON/refs/heads/main/README.md', this)">
+                <div class="btn-info">
+                    <i class="fa-brands fa-python"></i>
+                    <span class="btn-text">LYRAMOON V9</span>
+                </div>
+                <i class="fa-solid fa-arrow-right arrow-icon"></i>
+                <div class="spinner"></div>
+            </button>
+
+            <!-- Button 10 -->
+            <button class="chat-btn" onclick="fetchAndRedirect('https://raw.githubusercontent.com/NEXURA-M/A/refs/heads/main/README.md', this)">
+                <div class="btn-info">
+                    <i class="fa-solid fa-star"></i>
+                    <span class="btn-text">LYRAMOON V10</span>
                 </div>
                 <i class="fa-solid fa-arrow-right arrow-icon"></i>
                 <div class="spinner"></div>
