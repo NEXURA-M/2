@@ -34,7 +34,7 @@ def submit():
     if not name or not html or not domain:
         return jsonify({'status': 'error', 'message': 'Missing fields'}), 400
 
-    # Paid domains
+    # Paid domains logic
     if price > 0:
         return jsonify({
             'status': 'paid',
@@ -52,7 +52,7 @@ def submit():
         resp.raise_for_status()
         
         brew_data = resp.json()
-        html_url = brew_data.get('link') # BrewPage returns 'link'
+        html_url = brew_data.get('link') 
         
         if not html_url:
             return jsonify({'status': 'error', 'message': f'BrewPage error: URL not found.'}), 500
@@ -60,12 +60,11 @@ def submit():
     except Exception as e:
         return jsonify({'status': 'error', 'message': f'Upload failed: {str(e)}'}), 500
 
-    # ✨ NAME AUR DOMAIN KO JOD KAR FULL DOMAIN BANANA ✨
-    # Example: name="Taqi", domain=".lyra.stu" -> full_domain = "taqi.lyra.stu"
-    clean_name = re.sub(r'[^a-zA-Z0-9]', '', name.lower()) # Spaces aur special chars hatao
+    # Name aur Domain jod kar Full Domain banana (e.g. Taqi + .lyra.stu = taqi.lyra.stu)
+    clean_name = re.sub(r'[^a-zA-Z0-9]', '', name.lower())
     full_domain = f"{clean_name}{domain}"
 
-    # Data locally save karna
+    # Data locally data.json mein save karna
     try:
         with open(DATA_FILE, 'r') as f:
             sites = json.load(f)
@@ -74,9 +73,9 @@ def submit():
             sites = []
 
         sites.append({
-            'name': name,               # User ka original name (e.g. Taqi)
-            'domain': full_domain,      # Full domain (e.g. taqi.lyra.stu)
-            'url': html_url             # Hosted link
+            'name': name,
+            'domain': full_domain,
+            'url': html_url
         })
 
         with open(DATA_FILE, 'w') as f:
