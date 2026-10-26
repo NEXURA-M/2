@@ -1,241 +1,136 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Lyra Browser · by Muhammad Taqi</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#07070c;--ink:#e9e9f2;--muted:#8b8ba7;--line:rgba(255,255,255,.08);--card:rgba(255,255,255,.03);--violet:#a78bfa;--cyan:#22d3ee;--pink:#f472b6;--green:#34d399}
-*{box-sizing:border-box}body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;margin:0;padding:0;min-height:100vh}
-.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
-.blob{position:absolute;border-radius:50%;filter:blur(110px);opacity:.5;animation:float 22s ease-in-out infinite}
-.b1{width:560px;height:560px;background:#6d28d9;top:-180px;left:-160px}
-.b2{width:520px;height:520px;background:#0891b2;bottom:-160px;right:-140px;animation-delay:-8s}
-.b3{width:400px;height:400px;background:#db2777;top:40%;left:50%;animation-delay:-16s;opacity:.3}
-@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-30px)}}
-.wrap{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 22px 80px}
-header{display:flex;align-items:center;justify-content:space-between;padding:22px 0;flex-wrap:wrap;gap:12px}
-.logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk';font-weight:700;font-size:17px}
-.logo .dot{width:26px;height:26px;border-radius:9px;background:conic-gradient(from 180deg,var(--violet),var(--cyan),var(--pink),var(--violet));box-shadow:0 0 22px rgba(167,139,250,.55)}
-.nav b{color:var(--ink);font-weight:600}
-.builder-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:12px;background:linear-gradient(120deg,var(--violet),var(--cyan));color:#07070c;font-weight:600;font-size:13px;text-decoration:none;cursor:pointer;border:0;font-family:'Space Grotesk'}
-.hero{padding:52px 0 18px;text-align:center}
-.chip{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--muted);background:var(--card)}
-.chip .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);animation:pulse 1.6s infinite}
-@keyframes pulse{50%{opacity:.4}}
-h1{font-family:'Space Grotesk';font-size:clamp(36px,6vw,68px);line-height:1.03;letter-spacing:-.035em;margin:16px 0 10px}
-h1 .g{background:linear-gradient(120deg,var(--violet),var(--cyan) 50%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{color:var(--muted);max-width:620px;margin:0 auto;font-size:15px;line-height:1.6}
-.searchbar{max-width:720px;margin:26px auto 0;position:relative}
-.searchbar input{width:100%;padding:16px 100px 16px 52px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--ink);font-size:15px;outline:none}
-.searchbar input:focus{border-color:rgba(167,139,250,.6);box-shadow:0 0 0 4px rgba(167,139,250,.12)}
-.searchbar .ico{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px}
-.searchbar .hint{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:11px;border:1px solid var(--line);padding:3px 8px;border-radius:6px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:34px}
-.site{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:18px;cursor:pointer;transition:.22s}
-.site:hover{transform:translateY(-3px);border-color:rgba(167,139,250,.5);background:rgba(167,139,250,.06);box-shadow:0 18px 40px -20px rgba(167,139,250,.4)}
-.site .top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.site .ico{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:19px;background:linear-gradient(135deg,rgba(167,139,250,.25),rgba(34,211,238,.15));border:1px solid var(--line)}
-.site .cat{font-size:11px;color:var(--muted);text-transform:uppercase}
-.site .name{font-family:'Space Grotesk';font-weight:600;font-size:16px;margin-top:2px}
-.site .path{font-family:monospace;font-size:11px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
-/* viewer modal */
-.viewer{position:fixed;inset:0;z-index:100;background:rgba(5,5,10,.95);backdrop-filter:blur(10px);display:none;flex-direction:column}
-.viewer.show{display:flex}
-.vbar{display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);background:#0b0b14;gap:10px;flex-wrap:wrap}
-.vaddr{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;padding:10px 16px;font-family:monospace;font-size:14px;color:var(--ink);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;min-width:200px}
-.vbtn{background:transparent;border:1px solid var(--line);color:var(--muted);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;transition:.2s}
-.vbtn:hover{color:#fff;border-color:var(--violet)}
-.vbtn.close{color:var(--pink);border-color:rgba(244,114,182,.3)}
-.vcontent{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
-.qr-display{background:#fff;padding:20px;border-radius:20px;margin-bottom:20px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
-.qr-display img{display:block;width:250px;height:250px}
-.qr-info{text-align:center;color:var(--muted);font-size:14px;max-width:500px;font-family:Inter}
-.qr-info b{color:var(--ink)}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lyra Browser — Explore Created Webs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #fff; min-height: 100vh; }
+    .glass { background: rgba(255,255,255,0.04); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.08); }
+    .glow { box-shadow: 0 0 40px rgba(139,92,246,0.15); }
+    .gradient-text { background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .site-card { transition: all 0.3s; cursor: pointer; }
+    .site-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(139,92,246,0.2); border-color: rgba(139,92,246,0.4); }
+    iframe { width: 100%; height: 100%; border: none; border-radius: 1rem; }
+  </style>
 </head>
-<body>
-<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
-
-<div class="wrap">
-  <header>
-    <div class="logo"><span class="dot"></span>Lyra Browser</div>
-    <div style="display:flex;gap:14px;align-items:center">
-      <div class="nav" style="font-size:13px;color:var(--muted)">· <b>built by Muhammad Taqi</b></div>
-      <button class="builder-btn" id="builderBtn">🚀 Lyra Builder</button>
-    </div>
-  </header>
-
-  <section class="hero">
-    <div class="chip"><span class="pulse"></span> Live registry</div>
-    <h1>Browse the <span class="g">Lyra web</span>.</h1>
-    <p>Every site published through Lyra Builder. Click any card to see its QR code and open the site.</p>
-    <div class="searchbar">
-      <span class="ico">🔎</span>
-      <input id="q" type="text" placeholder="Search sites or type #taqi.mt …" autocomplete="off">
-      <span class="hint">↵ open</span>
-    </div>
-  </section>
-
-  <div class="grid" id="grid"></div>
-</div>
-
-<div class="viewer" id="viewer">
-  <div class="vbar">
-    <div class="vaddr" id="vaddr">taqi.mt</div>
-    <button class="vbtn" id="vext">Open Live Site</button>
-    <button class="vbtn close" id="vclose">Close ✕</button>
+<body class="antialiased">
+  <!-- Background blobs -->
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-violet-600/10 blur-[120px]"></div>
+    <div class="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-[120px]"></div>
   </div>
-  <div class="vcontent">
-    <div class="qr-display">
-      <img id="qrImage" src="" alt="QR Code">
-    </div>
-    <div class="qr-info">
-      <p>Scan this QR code with your phone to open <b id="siteUrl"></b></p>
-      <p style="font-size:12px;margin-top:12px;color:var(--muted)">QR Link: <code id="qrLink" style="word-break:break-all;color:var(--cyan)"></code></p>
+
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <header class="text-center mb-12">
+      <h1 class="text-6xl font-extrabold gradient-text mb-4">Lyra Browser</h1>
+      <p class="text-gray-400 text-lg">Explore every web created with Lyra Builder.</p>
+    </header>
+
+    <!-- Grid of sites -->
+    <div id="sitesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+    <!-- Empty state -->
+    <div id="emptyState" class="hidden text-center py-20">
+      <p class="text-gray-500 text-xl">No sites yet. Be the first to <a href="BUILDER_URL" class="text-violet-400 underline">create one</a>!</p>
     </div>
   </div>
-</div>
 
-<script>
-const registry = {};
-let current = null;
-
-async function loadRegistry() {
-  try {
-    const res = await fetch('domains/registry.html?_=' + Date.now(), {cache:'no-cache'});
-    const txt = await res.text();
-    const doc = new DOMParser().parseFromString(txt, 'text/html');
-    const blocks = doc.querySelectorAll('pre.lyra-target[data-tld]');
-    
-    blocks.forEach(pre => {
-      const tld = pre.dataset.tld;
-      if (!tld) return;
-      pre.textContent.split('\n').forEach(line => {
-        const parts = line.trim().split('=');
-        if (parts.length < 2) return;
-        const name = parts[0].trim();
-        const pathAndQr = parts[1].split('|');
-        const path = pathAndQr[0].trim();
-        const qr = pathAndQr[1] ? pathAndQr[1].trim() : '';
-        
-        const key = `${name.toLowerCase()}.${tld}`;
-        registry[key] = { name, tld, path, qr, category: path.split('/')[0] };
-      });
-    });
-    render();
-  } catch (e) {
-    console.error('Failed to load registry', e);
-  }
-}
-
-function render() {
-  const grid = document.getElementById('grid');
-  const list = Object.entries(registry).sort((a,b)=>a[0].localeCompare(b[0]));
-  
-  if (!list.length) {
-    grid.innerHTML = `<div style="text-align:center;padding:60px;color:var(--muted);grid-column:1/-1;border:1px dashed var(--line);border-radius:18px">No sites published yet.<br><b>Use Lyra Builder to publish one!</b></div>`;
-    return;
-  }
-
-  grid.innerHTML = list.map(([key, s]) => `
-    <div class="site" data-key="${key}">
-      <div class="top">
-        <div class="ico">${s.category==='ai'?'🧠':s.category==='web'?'🌐':s.category==='game'?'🎮':'✨'}</div>
-        <div>
-          <div class="cat">${s.category}</div>
-          <div class="name">${key}</div>
-        </div>
-      </div>
-      <div class="path">${s.path}</div>
+  <!-- Viewer modal (for hash routing) -->
+  <div id="viewer" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm p-6">
+    <div class="relative w-full h-full max-w-5xl mx-auto">
+      <button onclick="closeViewer()" class="absolute -top-12 right-0 text-white text-3xl hover:text-violet-400">&times;</button>
+      <iframe id="viewerFrame" class="glass rounded-2xl" sandbox="allow-scripts allow-same-origin"></iframe>
     </div>
-  `).join('');
+  </div>
 
-  grid.querySelectorAll('.site').forEach(el => {
-    el.onclick = () => openViewer(el.dataset.key);
-  });
-}
+  <script>
+    // ---------- CONFIG ----------
+    // Replace with your actual KeepJSON bin ID (see README)
+    const KEEPJSON_ID = 'YOUR_KEEPJSON_BIN_ID';
+    const KEEPJSON_URL = `https://keepjson.fourlegs.workers.dev/bins/${KEEPJSON_ID}`;
 
-function openViewer(key) {
-  current = registry[key];
-  if (!current) return;
-  
-  document.getElementById('vaddr').textContent = key;
-  document.getElementById('qrImage').src = current.qr;
-  document.getElementById('qrLink').textContent = current.qr || 'No QR generated';
-  
-  const base = window.location.origin + window.location.pathname.replace('index.html', '');
-  const liveUrl = base + current.path;
-  document.getElementById('siteUrl').textContent = liveUrl;
-  
-  document.getElementById('viewer').classList.add('show');
-  if (location.hash !== '#'+key) history.replaceState(null,'','#'+key);
-}
-
-function closeViewer() {
-  document.getElementById('viewer').classList.remove('show');
-  current = null;
-  if (location.hash) history.replaceState(null,'',location.pathname);
-}
-
-document.getElementById('vclose').onclick = closeViewer;
-document.getElementById('vext').onclick = () => {
-  if (current) {
-    const base = window.location.origin + window.location.pathname.replace('index.html', '');
-    window.open(base + current.path, '_blank');
-  }
-};
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && document.getElementById('viewer').classList.contains('show')) closeViewer();
-});
-
-// Search & navigation
-const qEl = document.getElementById('q');
-qEl.addEventListener('input', e => {
-  const q = e.target.value.toLowerCase();
-  document.querySelectorAll('.site').forEach(el => {
-    el.style.display = el.dataset.key.includes(q) ? 'block' : 'none';
-  });
-});
-
-qEl.addEventListener('keydown', async e => {
-  if (e.key === 'Enter') {
-    let v = e.target.value.trim().replace(/^#/, '').toLowerCase();
-    if (registry[v]) {
-      openViewer(v);
-      e.target.value = '';
-    } else if (v === 'builder' || v === 'lyra builder') {
+    // ---------- Load sites ----------
+    async function loadSites() {
       try {
-        const res = await fetch('url.txt?_=' + Date.now());
-        const txt = await res.text();
-        const m = txt.match(/url:\s*(\S+)/);
-        if (m) window.open(m[1], '_blank');
-      } catch(err) { alert('Could not fetch builder URL'); }
-    } else {
-      window.open('https://www.google.com/search?q=' + encodeURIComponent(e.target.value), '_blank');
+        const res = await fetch(KEEPJSON_URL);
+        if (!res.ok) throw new Error('Failed to fetch data');
+        const data = await res.json();
+        // data is expected to be an array of { name, domain, url }
+        renderSites(data);
+      } catch (err) {
+        console.error(err);
+        document.getElementById('emptyState').classList.remove('hidden');
+      }
     }
-  }
-});
 
-document.getElementById('builderBtn').onclick = async () => {
-  try {
-    const res = await fetch('url.txt?_=' + Date.now());
-    const txt = await res.text();
-    const m = txt.match(/url:\s*(\S+)/);
-    if (m) window.open(m[1], '_blank');
-  } catch(err) { alert('Could not fetch builder URL'); }
-};
+    function renderSites(sites) {
+      const grid = document.getElementById('sitesGrid');
+      grid.innerHTML = '';
+      if (!sites || sites.length === 0) {
+        document.getElementById('emptyState').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('emptyState').classList.add('hidden');
+      sites.forEach(site => {
+        const card = document.createElement('div');
+        card.className = 'site-card glass rounded-2xl p-6';
+        card.innerHTML = `
+          <h3 class="text-2xl font-bold text-white">${site.name}</h3>
+          <p class="text-violet-400 text-sm mt-1">${site.domain}</p>
+          <p class="text-gray-500 text-xs mt-3">Click to open</p>
+        `;
+        card.addEventListener('click', () => {
+          window.location.hash = site.domain;
+        });
+        grid.appendChild(card);
+      });
+    }
 
-// Hash routing
-function handleHash() {
-  const h = location.hash.replace(/^#/,'').toLowerCase();
-  if (h && registry[h]) openViewer(h);
-}
-window.addEventListener('hashchange', handleHash);
+    // ---------- Hash routing ----------
+    async function handleHash() {
+      const domain = window.location.hash.replace('#', '');
+      if (!domain) {
+        closeViewer();
+        return;
+      }
+      // Find the site with this domain
+      try {
+        const res = await fetch(KEEPJSON_URL);
+        const sites = await res.json();
+        const site = sites.find(s => s.domain === domain);
+        if (site && site.url) {
+          openViewer(site.url);
+        } else {
+          alert('Site not found.');
+          window.location.hash = '';
+        }
+      } catch (err) {
+        alert('Error loading site.');
+      }
+    }
 
-loadRegistry().then(handleHash);
-</script>
+    function openViewer(url) {
+      const viewer = document.getElementById('viewer');
+      const frame = document.getElementById('viewerFrame');
+      frame.src = url;
+      viewer.classList.remove('hidden');
+    }
+
+    function closeViewer() {
+      document.getElementById('viewer').classList.add('hidden');
+      document.getElementById('viewerFrame').src = 'about:blank';
+      window.location.hash = '';
+    }
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHash);
+    window.addEventListener('load', () => {
+      loadSites();
+      if (window.location.hash) handleHash();
+    });
+  </script>
 </body>
 </html>
