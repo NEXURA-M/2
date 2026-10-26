@@ -1,136 +1,671 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lyra Browser — Explore Created Webs</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet" />
-  <style>
-    body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #fff; min-height: 100vh; }
-    .glass { background: rgba(255,255,255,0.04); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.08); }
-    .glow { box-shadow: 0 0 40px rgba(139,92,246,0.15); }
-    .gradient-text { background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .site-card { transition: all 0.3s; cursor: pointer; }
-    .site-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(139,92,246,0.2); border-color: rgba(139,92,246,0.4); }
-    iframe { width: 100%; height: 100%; border: none; border-radius: 1rem; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lyra Browser · by Muhammad Taqi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070c;--ink:#e9e9f2;--muted:#8b8ba7;--line:rgba(255,255,255,.08);
+  --card:rgba(255,255,255,.03);--violet:#a78bfa;--cyan:#22d3ee;--pink:#f472b6;
+  --green:#34d399;
+}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,sans-serif;
+  min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(110px);opacity:.5;
+  animation:float 22s ease-in-out infinite}
+.b1{width:560px;height:560px;background:#6d28d9;top:-180px;left:-160px}
+.b2{width:520px;height:520px;background:#0891b2;bottom:-160px;right:-140px;animation-delay:-8s}
+.b3{width:400px;height:400px;background:#db2777;top:40%;left:50%;animation-delay:-16s;opacity:.3}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-30px)}}
+
+.wrap{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 22px 80px}
+
+header{display:flex;align-items:center;justify-content:space-between;
+  padding:22px 0;flex-wrap:wrap;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-.02em;
+  font-size:17px}
+.logo .dot{width:26px;height:26px;border-radius:9px;
+  background:conic-gradient(from 180deg,var(--violet),var(--cyan),var(--pink),var(--violet));
+  box-shadow:0 0 22px rgba(167,139,250,.55)}
+.header-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.nav{font-size:13px;color:var(--muted)}
+.nav b{color:var(--ink);font-weight:600}
+.builder-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 16px;border-radius:12px;
+  background:linear-gradient(120deg,var(--violet),var(--cyan));
+  color:#07070c;font-weight:600;font-size:13px;
+  text-decoration:none;cursor:pointer;border:0;
+  font-family:'Space Grotesk',sans-serif;transition:.2s
+}
+.builder-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+
+.hero{padding:52px 0 18px;text-align:center}
+.chip{display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;border:1px solid var(--line);border-radius:999px;
+  font-size:12px;color:var(--muted);background:var(--card)}
+.chip .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 12px var(--green);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.4}}
+h1{font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(36px,6vw,68px);line-height:1.03;
+  letter-spacing:-.035em;margin:16px 0 10px}
+h1 .g{background:linear-gradient(120deg,var(--violet),var(--cyan) 50%,var(--pink));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:620px;margin:0 auto;font-size:15px;line-height:1.6}
+.hero p code{color:var(--cyan)}
+.hero .by{margin-top:12px;font-size:13px;color:var(--muted)}
+.hero .by b{color:var(--ink);font-weight:600}
+
+.searchbar{max-width:720px;margin:26px auto 0;position:relative}
+.searchbar input{
+  width:100%;padding:16px 100px 16px 52px;border-radius:16px;
+  border:1px solid var(--line);background:rgba(255,255,255,.04);
+  color:var(--ink);font:inherit;font-size:15px;outline:none;
+  transition:.2s;backdrop-filter:blur(8px)
+}
+.searchbar input:focus{
+  border-color:rgba(167,139,250,.6);
+  box-shadow:0 0 0 4px rgba(167,139,250,.12)
+}
+.searchbar .ico{position:absolute;left:18px;top:50%;
+  transform:translateY(-50%);color:var(--muted);font-size:18px}
+.searchbar .hint{position:absolute;right:16px;top:50%;
+  transform:translateY(-50%);color:var(--muted);font-size:11px;
+  border:1px solid var(--line);padding:3px 8px;border-radius:6px}
+
+.quicklinks{display:flex;gap:8px;justify-content:center;
+  margin:16px 0 6px;flex-wrap:wrap;font-size:13px}
+.quicklinks .ql-label{color:var(--muted);align-self:center;font-size:12px;
+  text-transform:uppercase;letter-spacing:.08em}
+.ql{
+  padding:6px 12px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);color:var(--muted);text-decoration:none;
+  font-size:13px;transition:.2s;cursor:pointer;
+  display:inline-flex;align-items:center;gap:4px
+}
+.ql:hover{color:var(--ink);border-color:rgba(167,139,250,.5);
+  background:rgba(167,139,250,.08)}
+.ql.primary{background:linear-gradient(120deg,rgba(167,139,250,.2),rgba(34,211,238,.12));
+  border-color:rgba(167,139,250,.5);color:var(--ink)}
+
+.pills{display:flex;gap:8px;justify-content:center;
+  margin:22px 0 6px;flex-wrap:wrap}
+.pill{padding:8px 16px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);color:var(--muted);font-size:13px;
+  cursor:pointer;transition:.2s;user-select:none}
+.pill:hover{color:var(--ink);border-color:rgba(167,139,250,.4)}
+.pill.on{
+  background:linear-gradient(120deg,rgba(167,139,250,.2),rgba(34,211,238,.12));
+  border-color:rgba(167,139,250,.7);color:var(--ink)
+}
+
+.stats{display:flex;gap:18px;justify-content:center;
+  margin:26px 0 0;flex-wrap:wrap;color:var(--muted);font-size:13px}
+.stats b{color:var(--ink);font-family:'Space Grotesk',sans-serif}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:14px;margin-top:34px}
+.site{
+  border:1px solid var(--line);border-radius:18px;background:var(--card);
+  padding:18px;cursor:pointer;transition:.22s;
+  position:relative;overflow:hidden
+}
+.site:hover{
+  transform:translateY(-3px);border-color:rgba(167,139,250,.5);
+  background:rgba(167,139,250,.06);
+  box-shadow:0 18px 40px -20px rgba(167,139,250,.4)
+}
+.site .top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.site .ico{width:38px;height:38px;border-radius:12px;display:grid;
+  place-items:center;font-size:19px;
+  background:linear-gradient(135deg,rgba(167,139,250,.25),rgba(34,211,238,.15));
+  border:1px solid var(--line)}
+.site .cat{font-size:11px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.1em}
+.site .name{font-family:'Space Grotesk',sans-serif;
+  font-weight:600;font-size:16px;margin-top:2px;word-break:break-all}
+.site .path{font-family:ui-monospace,monospace;font-size:11px;
+  color:var(--muted);margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--line);word-break:break-all}
+
+.empty{text-align:center;color:var(--muted);padding:60px 20px;
+  border:1px dashed var(--line);border-radius:18px;margin-top:34px}
+.empty b{color:var(--ink)}
+
+.err{color:var(--pink);font-size:13px;margin-top:10px;
+  display:none;text-align:center}
+.err.show{display:block}
+.err.ok{color:var(--green)}
+
+footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:13px;display:flex;
+  justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* viewer */
+.viewer{position:fixed;inset:0;z-index:60;background:rgba(5,5,10,.92);
+  backdrop-filter:blur(10px);display:none;flex-direction:column}
+.viewer.show{display:flex}
+.vbar{display:flex;align-items:center;gap:10px;padding:14px 18px;
+  border-bottom:1px solid var(--line);background:#0b0b14;flex-wrap:wrap}
+.vdots{display:flex;gap:6px}
+.vdots i{width:11px;height:11px;border-radius:50%;display:block}
+.vdots i:nth-child(1){background:#f87171}
+.vdots i:nth-child(2){background:#fbbf24}
+.vdots i:nth-child(3){background:#34d399}
+.vaddr{
+  flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);
+  border-radius:10px;padding:8px 14px;
+  font-family:ui-monospace,monospace;font-size:13px;color:var(--ink);
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis;min-width:200px
+}
+.vaddr .lock{color:var(--green);margin-right:6px}
+.vaddr .to{color:var(--muted);margin-left:8px}
+.vbtns{display:flex;gap:6px;flex-wrap:wrap}
+.vbtn{
+  background:transparent;border:1px solid var(--line);color:var(--muted);
+  padding:7px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-family:inherit;transition:.2s
+}
+.vbtn:hover{color:var(--ink);border-color:var(--violet)}
+.vbtn.close{color:var(--pink);border-color:rgba(244,114,182,.3)}
+.vbtn.close:hover{background:rgba(244,114,182,.1)}
+.viewer iframe{flex:1;border:0;background:#fff;width:100%}
+</style>
 </head>
-<body class="antialiased">
-  <div class="fixed inset-0 -z-10 overflow-hidden">
-    <div class="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-violet-600/10 blur-[120px]"></div>
-    <div class="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-[120px]"></div>
+<body>
+<div class="bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="logo"><span class="dot"></span>Lyra Browser</div>
+    <div class="header-right">
+      <div class="nav">· <b>built by Muhammad Taqi</b></div>
+      <button class="builder-btn" id="builderBtn">🚀 Lyra Builder</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="chip"><span class="pulse"></span> Live registry</div>
+    <h1>Browse the <span class="g">Lyra web</span>.</h1>
+    <p>Type <code>#taqi.mt</code> for registry sites · <code>nexura</code>,
+       <code>taqi</code>, <code>lyra</code>, <code>avelia</code> for shortcuts ·
+       anything else → Google.</p>
+    <div class="by">created by <b>Muhammad Taqi</b></div>
+
+    <div class="searchbar">
+      <span class="ico">🔎</span>
+      <input id="q" type="text"
+             placeholder="Search sites, #domain, or anything → Google …"
+             autocomplete="off" spellcheck="false">
+      <span class="hint">↵ open</span>
+    </div>
+
+    <div class="quicklinks" id="quicklinks">
+      <span class="ql-label">Quick</span>
+      <a class="ql" data-url="https://nexura.oneapp.dev/">Nexura</a>
+      <a class="ql" data-url="https://taqi.oneapp.dev/">Taqi</a>
+      <a class="ql" data-url="https://nexura-m.github.io/1/lyra-ai-builder">Lyra AI</a>
+      <a class="ql" data-url="https://nexura-m.github.io/Avelia/">Avelia</a>
+      <a class="ql primary" id="qlBuilder">🚀 Lyra Builder</a>
+    </div>
+  </section>
+
+  <div class="pills" id="pills">
+    <div class="pill on" data-cat="all">All</div>
+    <div class="pill" data-cat="ai">🧠 AI</div>
+    <div class="pill" data-cat="web">🌐 Web</div>
+    <div class="pill" data-cat="game">🎮 Game</div>
+    <div class="pill" data-cat="other">✨ Others</div>
   </div>
 
-  <div class="max-w-6xl mx-auto px-6 py-16">
-    <header class="text-center mb-12">
-      <h1 class="text-6xl font-extrabold gradient-text mb-4">Lyra Browser</h1>
-      <p class="text-gray-400 text-lg">Explore every web created with Lyra Builder.</p>
-    </header>
+  <div class="stats" id="stats"></div>
+  <div class="err" id="err"></div>
+  <div id="grid" class="grid"></div>
 
-    <div id="sitesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  <footer>
+    <div>Lyra Browser · created by Muhammad Taqi</div>
+    <div id="foot">loading registry…</div>
+  </footer>
+</div>
 
-    <div id="emptyState" class="hidden text-center py-20">
-      <p class="text-gray-500 text-xl">No sites yet. Be the first to <a id="createLink" href="#" class="text-violet-400 underline" target="_blank">create one</a>!</p>
+<div class="viewer" id="viewer">
+  <div class="vbar">
+    <div class="vdots"><i></i><i></i><i></i></div>
+    <div class="vaddr" id="vaddr">
+      <span class="lock">🔒</span>taqi.mt
+    </div>
+    <div class="vbtns">
+      <button class="vbtn" id="vcopy">copy link</button>
+      <button class="vbtn" id="vext">open raw</button>
+      <button class="vbtn close" id="vclose">close ✕</button>
     </div>
   </div>
+  <iframe id="viframe" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"></iframe>
+</div>
 
-  <div id="viewer" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm p-6">
-    <div class="relative w-full h-full max-w-5xl mx-auto">
-      <button onclick="closeViewer()" class="absolute -top-12 right-0 text-white text-3xl hover:text-violet-400">&times;</button>
-      <iframe id="viewerFrame" class="glass rounded-2xl" sandbox="allow-scripts allow-same-origin"></iframe>
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   CONFIG — Change these if your repo changes
+   ═══════════════════════════════════════════════════════════════════ */
+const REPO   = 'NEXURA-M/builder';
+const BRANCH = 'main';
+
+/* Base URL for fetching sites. Works on any platform since we use raw.githubusercontent */
+const RAW_BASE = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/`;
+const CDN_BASE = `https://cdn.jsdelivr.net/gh/${REPO}@${BRANCH}/`;
+const LIVE_BASE = `https://nexura-m.github.io/builder/`; // used for relative assets inside user's code
+
+const REGISTRY_SOURCES = [
+  `${RAW_BASE}domains/registry.html`,
+  `${CDN_BASE}domains/registry.html`,
+  `domains/registry.html`
+];
+
+const BUILDER_SOURCES = [
+  `${RAW_BASE}url.txt`,
+  `${CDN_BASE}url.txt`,
+  `url.txt`
+];
+
+/* ── shortcuts ────────────────────────────────────────────────────── */
+const SHORTCUTS = {
+  'nexura':             'https://nexura.oneapp.dev/',
+  'nexura.com':         'https://nexura.oneapp.dev/',
+  'nexura.oneapp.dev':  'https://nexura.oneapp.dev/',
+
+  'taqi':               'https://taqi.oneapp.dev/',
+  'taqi.com':           'https://taqi.oneapp.dev/',
+  'taqi.oneapp.dev':    'https://taqi.oneapp.dev/',
+
+  'lyra':               'https://nexura-m.github.io/1/lyra-ai-builder',
+  'lyra.com':           'https://nexura-m.github.io/1/lyra-ai-builder',
+
+  'avelia':             'https://nexura-m.github.io/Avelia/',
+  'avelia.com':         'https://nexura-m.github.io/Avelia/',
+};
+
+const BUILDER_ALIASES = new Set(['builder', 'lyra builder', 'lyra-builder']);
+/* ═══════════════════════════════════════════════════════════════════ */
+
+const ICONS = {ai:'🧠', web:'🌐', game:'🎮', other:'✨'};
+const registry = {};
+let filterCat = 'all';
+let query     = '';
+let current   = null;
+let builderUrl = null;
+
+const gridEl  = document.getElementById('grid');
+const statsEl = document.getElementById('stats');
+const footEl  = document.getElementById('foot');
+const errEl   = document.getElementById('err');
+const viewer  = document.getElementById('viewer');
+const vaddr   = document.getElementById('vaddr');
+const viframe = document.getElementById('viframe');
+
+function showErr(msg, ok){
+  errEl.textContent = msg;
+  errEl.classList.toggle('ok', !!ok);
+  errEl.classList.add('show');
+  clearTimeout(showErr._t);
+  showErr._t = setTimeout(()=>errEl.classList.remove('show'), 5000);
+}
+
+/* ── registry fetch ──────────────────────────────────────────────── */
+async function fetchRegistry(){
+  let lastErr;
+  for (const url of REGISTRY_SOURCES){
+    try{
+      const res = await fetch(url + (url.includes('?') ? '&' : '?') + '_=' + Date.now(),
+                              {cache:'no-cache'});
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const txt = await res.text();
+      if (txt && txt.includes('data-tld')) return txt;
+      throw new Error('no data-tld blocks');
+    }catch(e){ lastErr = e; console.warn('registry source failed:', url, e.message); }
+  }
+  throw lastErr || new Error('no source reachable');
+}
+
+function parseRegistry(txt){
+  const doc    = new DOMParser().parseFromString(txt, 'text/html');
+  const blocks = doc.querySelectorAll('pre.lyra-target[data-tld]');
+  let total    = 0;
+  blocks.forEach(pre=>{
+    const tld   = (pre.dataset.tld || '').trim().toLowerCase();
+    const price = parseInt(pre.dataset.price || '0', 10) || 0;
+    if (!tld) return;
+    for (const raw of pre.textContent.split('\n')){
+      const line = raw.trim();
+      if (!line || !line.includes('=')) continue;
+      const eq = line.indexOf('=');
+      const n  = line.slice(0, eq).trim();
+      const p  = line.slice(eq + 1).trim();
+      if (!n || !p) continue;
+      const key = `${n.toLowerCase()}.${tld}`;
+      registry[key] = {
+        name:n, tld, path:p, price,
+        category:(p.split('/')[0] || 'other').toLowerCase()
+      };
+      total++;
+    }
+  });
+  return { total, tldCount: blocks.length };
+}
+
+async function loadRegistry(){
+  footEl.textContent = 'loading registry…';
+  try{
+    const txt = await fetchRegistry();
+    const { total, tldCount } = parseRegistry(txt);
+    footEl.textContent =
+      `${total} live site${total===1?'':'s'} across ${tldCount} TLD${tldCount===1?'':'s'} · registry loaded`;
+  }catch(e){
+    console.error(e);
+    footEl.textContent = '⚠️ could not load registry';
+    showErr('Registry load failed — ' + e.message);
+  }
+  render();
+  handleHash();
+}
+
+/* ── builder URL from url.txt ───────────────────────────────────── */
+async function fetchBuilderUrl(){
+  for (const url of BUILDER_SOURCES){
+    try{
+      const res = await fetch(url + (url.includes('?') ? '&' : '?') + '_=' + Date.now(),
+                              {cache:'no-cache'});
+      if (!res.ok) continue;
+      const txt = await res.text();
+      const m = txt.match(/^\s*url:\s*(\S+)/mi);
+      if (m && /^https?:\/\//.test(m[1])) return m[1].trim();
+    }catch(e){ /* try next */ }
+  }
+  return null;
+}
+
+async function refreshBuilderUrl(){
+  const u = await fetchBuilderUrl();
+  if (u){
+    builderUrl = u;
+    document.getElementById('qlBuilder').title = u;
+  }
+  return builderUrl;
+}
+
+async function openBuilder(){
+  const u = builderUrl || await fetchBuilderUrl();
+  if (u){
+    window.open(u, '_blank', 'noopener');
+    showErr('Opened Lyra Builder → ' + u, true);
+  } else {
+    showErr('Could not fetch builder URL from url.txt');
+  }
+}
+
+/* ── render ──────────────────────────────────────────────────────── */
+function render(){
+  const all = Object.entries(registry).map(([k,v])=>({key:k, ...v}));
+  const counts = {all: all.length, ai:0, web:0, game:0, other:0};
+  all.forEach(s => counts[s.category] = (counts[s.category]||0) + 1);
+
+  statsEl.innerHTML =
+    `<div><b>${counts.all}</b> sites</div>` +
+    `<div><b>${new Set(all.map(s=>s.tld)).size}</b> domains</div>` +
+    `<div><b>${counts.ai}</b> AI · <b>${counts.web}</b> web · ` +
+    `<b>${counts.game}</b> game · <b>${counts.other}</b> other</div>`;
+
+  const q = query.toLowerCase();
+  const list = all
+    .filter(s => filterCat==='all' || s.category===filterCat)
+    .filter(s => !q || s.key.includes(q) || s.name.toLowerCase().includes(q))
+    .sort((a,b) => a.key.localeCompare(b.key));
+
+  if (!list.length){
+    gridEl.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      No registry sites${q ? ` for "${q}"` : ''}.<br>
+      Press <b>Enter</b> to search Google, or pick a <b>Quick</b> link above.
+    </div>`;
+    return;
+  }
+
+  gridEl.innerHTML = list.map(s=>`
+    <div class="site" data-key="${s.key}" role="button" tabindex="0">
+      <div class="top">
+        <div class="ico">${ICONS[s.category] || '✨'}</div>
+        <div>
+          <div class="cat">${s.category}${s.price === 0 ? ' · free' : ''}</div>
+          <div class="name">${s.key}</div>
+        </div>
+      </div>
+      <div class="path">${s.path}</div>
     </div>
-  </div>
+  `).join('');
 
-  <script>
-    // ⚠️ YAHAN APNA GITHUB USERNAME AUR REPO NAME DALEIN ⚠️
-    const GITHUB_USERNAME = 'NEXURA-M'; 
-    const GITHUB_REPO = '2';           
+  gridEl.querySelectorAll('.site').forEach(el=>{
+    el.onclick = ()=> openViewer(el.dataset.key);
+    el.onkeydown = e=>{
+      if (e.key === 'Enter' || e.key === ' '){
+        e.preventDefault(); openViewer(el.dataset.key);
+      }
+    };
+  });
+}
+
+/* ── viewer (fetch & render HTML properly) ──────────────────────── */
+async function openViewer(key){
+  key = String(key).replace(/^#/,'').toLowerCase();
+  const entry = registry[key];
+  if (!entry){
+    showErr(`"${key}" is not in the registry yet.`);
+    return;
+  }
+  current = {key, ...entry};
+  
+  vaddr.innerHTML =
+    `<span class="lock">🔒</span>${current.key}` +
+    `<span class="to">→ ${current.path}</span>`;
     
-    // Ab main branch se direct data fetch hoga
-    const DATA_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/main/data.json`;
-    const URL_TXT_LINK = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/main/url.txt`;
+  viframe.srcdoc = `<html><body style="display:grid;place-items:center;height:100vh;font-family:sans-serif;color:#8b8ba7;background:#fff">Loading preview...</body></html>`;
+  viewer.classList.add('show');
+  if (location.hash !== '#'+key) history.replaceState(null,'','#'+key);
 
-    async function loadSites() {
+  try {
+    // 1. Fetch the raw HTML code
+    let htmlCode = null;
+    for (const base of [RAW_BASE, CDN_BASE, '']) {
       try {
-        // Cache bypass karne ke liye timestamp
-        const res = await fetch(`${DATA_URL}?t=${new Date().getTime()}`);
-        if (!res.ok) throw new Error('Failed to fetch data');
-        const data = await res.json();
-        renderSites(data);
-      } catch (err) {
-        console.error(err);
-        document.getElementById('emptyState').classList.remove('hidden');
-      }
-    }
-
-    function renderSites(sites) {
-      const grid = document.getElementById('sitesGrid');
-      grid.innerHTML = '';
-      if (!sites || sites.length === 0) {
-        document.getElementById('emptyState').classList.remove('hidden');
-        return;
-      }
-      document.getElementById('emptyState').classList.add('hidden');
-      
-      // Latest sites pehle show karne ke liye reverse loop
-      sites.slice().reverse().forEach(site => {
-        const card = document.createElement('div');
-        card.className = 'site-card glass rounded-2xl p-6';
-        card.innerHTML = `
-          <h3 class="text-2xl font-bold text-white">${site.name}</h3>
-          <p class="text-violet-400 text-sm mt-1">${site.domain}</p>
-          <p class="text-gray-500 text-xs mt-3">Click to open</p>
-        `;
-        card.addEventListener('click', () => {
-          window.location.hash = site.domain;
-        });
-        grid.appendChild(card);
-      });
-    }
-
-    async function handleHash() {
-      const domain = window.location.hash.replace('#', '');
-      if (!domain) {
-        closeViewer();
-        return;
-      }
-      try {
-        const res = await fetch(`${DATA_URL}?t=${new Date().getTime()}`);
-        const sites = await res.json();
-        const site = sites.find(s => s.domain === domain);
-        if (site && site.url) {
-          openViewer(site.url);
-        } else {
-          alert('Site not found.');
-          window.location.hash = '';
+        const res = await fetch(base + current.path);
+        if (res.ok) {
+          htmlCode = await res.text();
+          break;
         }
-      } catch (err) {
-        alert('Error loading site.');
+      } catch(e) {}
+    }
+
+    if (!htmlCode) throw new Error('Could not load HTML file');
+
+    // 2. Inject a <base> tag so images/CSS (relative links) load from GitHub Pages
+    if (!htmlCode.includes('<base')) {
+      const baseTag = `<base href="${LIVE_BASE}">`;
+      if (htmlCode.includes('<head>')) {
+        htmlCode = htmlCode.replace('<head>', `<head>\n${baseTag}`);
+      } else {
+        htmlCode = baseTag + htmlCode;
       }
     }
 
-    function openViewer(url) {
-      document.getElementById('viewerFrame').src = url;
-      document.getElementById('viewer').classList.remove('hidden');
+    // 3. Blob URL render (forces browser to show it as a website, not plain text)
+    const blob = new Blob([htmlCode], {type: 'text/html'});
+    viframe.src = URL.createObjectURL(blob);
+
+  } catch (err) {
+    console.warn('Preview fetch failed, falling back to direct URL:', err);
+    // Fallback to direct URL
+    viframe.src = LIVE_BASE + current.path;
+  }
+}
+
+function closeViewer(){
+  viewer.classList.remove('show');
+  viframe.src = 'about:blank';
+  current = null;
+  if (location.hash) history.replaceState(null,'',location.pathname);
+}
+
+document.getElementById('vclose').onclick = closeViewer;
+
+document.getElementById('vcopy').onclick = ()=>{
+  if (!current) return;
+  navigator.clipboard.writeText(location.href).then(()=>{
+    const b = document.getElementById('vcopy');
+    const t = b.textContent;
+    b.textContent = 'copied';
+    setTimeout(()=>b.textContent = t, 1200);
+  }).catch(()=>{});
+};
+document.getElementById('vext').onclick = ()=>{
+  if (current) window.open(LIVE_BASE + current.path, '_blank', 'noopener');
+};
+document.addEventListener('keydown', e=>{
+  if (e.key === 'Escape' && viewer.classList.contains('show')) closeViewer();
+});
+
+/* ── NAVIGATE ───────────────────────────────────────────────────── */
+async function navigate(raw){
+  let v = String(raw || '').trim();
+  if (!v) return;
+
+  /* 1) #domain → registry viewer */
+  if (v.startsWith('#')){
+    const key = v.slice(1).toLowerCase();
+    if (registry[key]){ openViewer(key); return; }
+    showErr(`"${key}" is not in the registry.`);
+    return;
+  }
+
+  /* 2) normalize */
+  let n = v.toLowerCase()
+           .replace(/^https?:\/\//, '')
+           .replace(/^www\./, '')
+           .replace(/\/+$/, '');
+
+  /* 3) builder aliases → url.txt */
+  if (BUILDER_ALIASES.has(n)){
+    await openBuilder();
+    return;
+  }
+
+  /* 4) exact shortcut */
+  if (SHORTCUTS[n]){
+    window.open(SHORTCUTS[n], '_blank', 'noopener');
+    return;
+  }
+
+  /* 5) exact registry */
+  if (registry[n]){
+    openViewer(n);
+    return;
+  }
+
+  /* 6) bare name → try ".com" then ".oneapp.dev" */
+  if (SHORTCUTS[n + '.com']){
+    window.open(SHORTCUTS[n + '.com'], '_blank', 'noopener');
+    return;
+  }
+  if (SHORTCUTS[n + '.oneapp.dev']){
+    window.open(SHORTCUTS[n + '.oneapp.dev'], '_blank', 'noopener');
+    return;
+  }
+
+  /* 7) URL-looking → open directly */
+  if (/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(n)){
+    window.open('https://' + n, '_blank', 'noopener');
+    return;
+  }
+
+  /* 8) anything else → Google */
+  window.open('https://www.google.com/search?q=' + encodeURIComponent(v),
+              '_blank', 'noopener');
+}
+
+/* ── pills ──────────────────────────────────────────────────────── */
+document.getElementById('pills').addEventListener('click', e=>{
+  const p = e.target.closest('.pill');
+  if (!p) return;
+  document.querySelectorAll('.pill').forEach(x=>x.classList.remove('on'));
+  p.classList.add('on');
+  filterCat = p.dataset.cat;
+  render();
+});
+
+/* ── search ─────────────────────────────────────────────────────── */
+const qEl = document.getElementById('q');
+
+qEl.addEventListener('input', e=>{
+  const v = e.target.value.trim();
+  if (v.startsWith('#')){
+    const key = v.slice(1).toLowerCase();
+    if (registry[key]){
+      openViewer(key);
+      e.target.value = '';
+      query = '';
+      render();
+      return;
     }
+  }
+  query = v;
+  render();
+});
 
-    function closeViewer() {
-      document.getElementById('viewer').classList.add('hidden');
-      document.getElementById('viewerFrame').src = 'about:blank';
-      window.location.hash = '';
-    }
+qEl.addEventListener('keydown', e=>{
+  if (e.key === 'Enter'){
+    e.preventDefault();
+    const v = e.target.value;
+    e.target.value = '';
+    query = '';
+    render();
+    navigate(v);
+  }
+});
 
-    // Builder URL auto-fetch karna
-    fetch(URL_TXT_LINK).then(r => r.text()).then(url => {
-      document.getElementById('createLink').href = url.trim();
-    }).catch(() => {});
+/* ── quick links ────────────────────────────────────────────────── */
+document.getElementById('quicklinks').addEventListener('click', e=>{
+  const a = e.target.closest('.ql');
+  if (!a) return;
+  e.preventDefault();
+  if (a.id === 'qlBuilder'){ openBuilder(); return; }
+  const url = a.dataset.url;
+  if (url) window.open(url, '_blank', 'noopener');
+});
 
-    window.addEventListener('hashchange', handleHash);
-    window.addEventListener('load', () => {
-      loadSites();
-      if (window.location.hash) handleHash();
-    });
-  </script>
+document.getElementById('builderBtn').addEventListener('click', openBuilder);
+
+/* ── hash routing ───────────────────────────────────────────────── */
+function handleHash(){
+  const h = location.hash.replace(/^#/,'').toLowerCase();
+  if (h && registry[h]) openViewer(h);
+}
+window.addEventListener('hashchange', handleHash);
+
+/* ── boot ───────────────────────────────────────────────────────── */
+loadRegistry();
+refreshBuilderUrl();
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"e3c1c9af36de41759418005494a48906","r":1,"spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
