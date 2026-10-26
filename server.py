@@ -1,5 +1,6 @@
 import os
 import json
+import re
 import requests
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
@@ -41,9 +42,8 @@ def submit():
             'contact': CONTACT_LINK
         })
 
-    # Free domains -> Upload to BrewPage (FIXED LOGIC)
+    # Free domains -> Upload to BrewPage
     try:
-        # BrewPage ko request bhejte waqt User-Agent dena zaroori hai
         headers = {
             'Content-Type': 'application/json',
             'User-Agent': 'LyraBuilder/1.0'
@@ -52,15 +52,18 @@ def submit():
         resp.raise_for_status()
         
         brew_data = resp.json()
-        
-        # BrewPage response mein URL 'link' field mein aata hai
-        html_url = brew_data.get('link')
+        html_url = brew_data.get('link') # BrewPage returns 'link'
         
         if not html_url:
-            return jsonify({'status': 'error', 'message': f'BrewPage error: URL not found in response. Response was: {brew_data}'}), 500
+            return jsonify({'status': 'error', 'message': f'BrewPage error: URL not found.'}), 500
             
     except Exception as e:
         return jsonify({'status': 'error', 'message': f'Upload failed: {str(e)}'}), 500
+
+    # ✨ NAME AUR DOMAIN KO JOD KAR FULL DOMAIN BANANA ✨
+    # Example: name="Taqi", domain=".lyra.stu" -> full_domain = "taqi.lyra.stu"
+    clean_name = re.sub(r'[^a-zA-Z0-9]', '', name.lower()) # Spaces aur special chars hatao
+    full_domain = f"{clean_name}{domain}"
 
     # Data locally save karna
     try:
@@ -71,9 +74,9 @@ def submit():
             sites = []
 
         sites.append({
-            'name': name,
-            'domain': domain,
-            'url': html_url
+            'name': name,               # User ka original name (e.g. Taqi)
+            'domain': full_domain,      # Full domain (e.g. taqi.lyra.stu)
+            'url': html_url             # Hosted link
         })
 
         with open(DATA_FILE, 'w') as f:
