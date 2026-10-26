@@ -44,16 +44,16 @@
 
   <script>
     // ⚠️ YAHAN APNA GITHUB USERNAME AUR REPO NAME DALEIN ⚠️
-    const GITHUB_USERNAME = 'NEXURA-2'; // Apna username dalein
-    const GITHUB_REPO = 'lyra-builder'; // Apna repo name dalein
+    const GITHUB_USERNAME = 'NEXURA-M'; 
+    const GITHUB_REPO = '2';           
     
-    // Data 'db' branch se fetch hoga
-    const DATA_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/db/data.json`;
+    // Ab main branch se direct data fetch hoga
+    const DATA_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/main/data.json`;
     const URL_TXT_LINK = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/main/url.txt`;
 
     async function loadSites() {
       try {
-        // Cache bypass karne ke liye timestamp laga rahe hain
+        // Cache bypass karne ke liye timestamp
         const res = await fetch(`${DATA_URL}?t=${new Date().getTime()}`);
         if (!res.ok) throw new Error('Failed to fetch data');
         const data = await res.json();
@@ -72,7 +72,9 @@
         return;
       }
       document.getElementById('emptyState').classList.add('hidden');
-      sites.forEach(site => {
+      
+      // Latest sites pehle show karne ke liye reverse loop
+      sites.slice().reverse().forEach(site => {
         const card = document.createElement('div');
         card.className = 'site-card glass rounded-2xl p-6';
         card.innerHTML = `
