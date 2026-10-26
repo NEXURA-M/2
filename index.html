@@ -17,7 +17,6 @@
   </style>
 </head>
 <body class="antialiased">
-  <!-- Background blobs -->
   <div class="fixed inset-0 -z-10 overflow-hidden">
     <div class="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-violet-600/10 blur-[120px]"></div>
     <div class="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-[120px]"></div>
@@ -29,16 +28,13 @@
       <p class="text-gray-400 text-lg">Explore every web created with Lyra Builder.</p>
     </header>
 
-    <!-- Grid of sites -->
     <div id="sitesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-    <!-- Empty state -->
     <div id="emptyState" class="hidden text-center py-20">
-      <p class="text-gray-500 text-xl">No sites yet. Be the first to <a href="BUILDER_URL" class="text-violet-400 underline">create one</a>!</p>
+      <p class="text-gray-500 text-xl">No sites yet. Be the first to <a id="createLink" href="#" class="text-violet-400 underline" target="_blank">create one</a>!</p>
     </div>
   </div>
 
-  <!-- Viewer modal (for hash routing) -->
   <div id="viewer" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm p-6">
     <div class="relative w-full h-full max-w-5xl mx-auto">
       <button onclick="closeViewer()" class="absolute -top-12 right-0 text-white text-3xl hover:text-violet-400">&times;</button>
@@ -47,18 +43,21 @@
   </div>
 
   <script>
-    // ---------- CONFIG ----------
-    // Replace with your actual KeepJSON bin ID (see README)
-    const KEEPJSON_ID = 'YOUR_KEEPJSON_BIN_ID';
-    const KEEPJSON_URL = `https://keepjson.fourlegs.workers.dev/bins/${KEEPJSON_ID}`;
+    // ⚠️ YAHAN APNA GITHUB USERNAME AUR REPO NAME DALEIN ⚠️
+    const GITHUB_USERNAME = 'YOUR_GITHUB_USERNAME'; 
+    const GITHUB_REPO = 'YOUR_REPO_NAME';           
+    
+    // Data db branch se fetch hoga
+    const DATA_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/db/data.json`;
+    
+    // Auto update Builder URL from url.txt
+    const URL_TXT_LINK = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/main/url.txt`;
 
-    // ---------- Load sites ----------
     async function loadSites() {
       try {
-        const res = await fetch(KEEPJSON_URL);
+        const res = await fetch(DATA_URL);
         if (!res.ok) throw new Error('Failed to fetch data');
         const data = await res.json();
-        // data is expected to be an array of { name, domain, url }
         renderSites(data);
       } catch (err) {
         console.error(err);
@@ -89,16 +88,14 @@
       });
     }
 
-    // ---------- Hash routing ----------
     async function handleHash() {
       const domain = window.location.hash.replace('#', '');
       if (!domain) {
         closeViewer();
         return;
       }
-      // Find the site with this domain
       try {
-        const res = await fetch(KEEPJSON_URL);
+        const res = await fetch(DATA_URL);
         const sites = await res.json();
         const site = sites.find(s => s.domain === domain);
         if (site && site.url) {
@@ -113,10 +110,8 @@
     }
 
     function openViewer(url) {
-      const viewer = document.getElementById('viewer');
-      const frame = document.getElementById('viewerFrame');
-      frame.src = url;
-      viewer.classList.remove('hidden');
+      document.getElementById('viewerFrame').src = url;
+      document.getElementById('viewer').classList.remove('hidden');
     }
 
     function closeViewer() {
@@ -125,7 +120,11 @@
       window.location.hash = '';
     }
 
-    // Listen for hash changes
+    // Builder URL auto-fetch karna
+    fetch(URL_TXT_LINK).then(r => r.text()).then(url => {
+      document.getElementById('createLink').href = url.trim();
+    }).catch(() => {});
+
     window.addEventListener('hashchange', handleHash);
     window.addEventListener('load', () => {
       loadSites();
