@@ -71,30 +71,22 @@ jobs:
           git commit -m "chore: update url.txt [skip ci]" || echo "No changes"
           git push origin ${GITHUB_REF_NAME} || echo "Push failed"
 
-      - name: Auto-Sync to DB Branch
+      - name: Auto-Sync data.json to main branch
         run: |
           cat << 'EOF' > sync.sh
           #!/bin/bash
           while true; do
             if [ -f data.json ]; then
-              cp data.json /tmp/latest_data.json
-              git fetch origin db 2>/dev/null || true
-              
-              if git show-ref --verify --quiet refs/remotes/origin/db; then
-                git checkout -B db origin/db
-              else
-                git checkout --orphan db
-                git rm -rf . > /dev/null 2>&1
-              fi
-              
-              cp /tmp/latest_data.json data.json
+              # Data add aur commit karein
               git add data.json
-              git commit -m "auto: update db [skip ci]" || echo "No changes"
-              git push origin db --force
-              
-              git checkout ${GITHUB_REF_NAME} -f
+              if ! git diff --cached --quiet; then
+                git commit -m "auto: update data.json [skip ci]"
+                # Latest changes pull karein fir push karein
+                git pull --rebase origin main || true
+                git push origin main || true
+              fi
             fi
-            sleep 60  # ✨ Ab har 1 minute baad sync hoga (pehle 300 tha) ✨
+            sleep 60  # Har 1 minute baad check karega
           done
           EOF
           chmod +x sync.sh
