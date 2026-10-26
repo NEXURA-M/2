@@ -1,11 +1,10 @@
 name: Lyra Builder Tunnel
- 
+
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
   schedule:
-    # Every 4 hours: 00:00, 04:00, 08:00, 12:00, 16:00, 20:00 UTC
     - cron: '0 */4 * * *'
 
 permissions:
@@ -27,40 +26,12 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      # ─────────────────────────────────────────────
-      # 💓 HEARTBEAT — edit dummy.txt every 4 hours
-      # ─────────────────────────────────────────────
-      - name: Update dummy.txt (heartbeat)
+      - name: Setup Files
         run: |
-          echo "==================================================" > dummy.txt
-          echo "      LYRA BUILDER — KEEP-ALIVE HEARTBEAT" >> dummy.txt
-          echo "==================================================" >> dummy.txt
-          echo "" >> dummy.txt
-          echo "Last updated : $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> dummy.txt
-          echo "Run number   : ${{ github.run_number }}" >> dummy.txt
-          echo "Triggered by : ${{ github.event_name }}" >> dummy.txt
-          echo "Commit       : ${{ github.sha }}" >> dummy.txt
-          echo "Actor        : ${{ github.actor }}" >> dummy.txt
-          echo "" >> dummy.txt
-          echo "This file is auto-updated every 4 hours by GitHub Actions." >> dummy.txt
-
+          if [ ! -f data.json ]; then echo "[]" > data.json; fi
           git config --local user.name  "lyra-bot"
           git config --local user.email "lyra-bot@users.noreply.github.com"
 
-          git add dummy.txt
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "chore(heartbeat): update dummy.txt [run #${{ github.run_number }}]"
-            for i in 1 2 3; do
-              git pull --rebase --autostash origin ${GITHUB_REF_NAME} && \
-              git push origin HEAD:${GITHUB_REF_NAME} && break || sleep 5
-            done
-          fi
-
-      # ─────────────────────────────────────────────
-      # 🐍 Python + Flask setup
-      # ─────────────────────────────────────────────
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -72,28 +43,16 @@ jobs:
           pip install flask flask-cors requests
 
       - name: Start Flask server
-        env:
-          KEEPJSON_BIN_ID: ${{ secrets.KEEPJSON_BIN_ID }}
         run: |
           nohup python server.py > server.log 2>&1 &
-          echo $! > flask.pid
           sleep 4
-          curl -sS http://localhost:5000/ > /dev/null && echo "✅ Flask is up"
 
-      # ─────────────────────────────────────────────
-      # ☁️  TryCloudflare tunnel
-      # ─────────────────────────────────────────────
-      - name: Download cloudflared
+      - name: Start TryCloudflare & Save URL
         run: |
           wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O cloudflared
           chmod +x cloudflared
-
-      - name: Start TryCloudflare tunnel & save URL to url.txt
-        run: |
           nohup ./cloudflared tunnel --url http://localhost:5000 --no-autoupdate > tunnel.log 2>&1 &
-          echo $! > tunnel.pid
-
-          # Wait up to 40s for the URL to appear
+          
           URL=""
           for i in $(seq 1 40); do
             URL=$(grep -o 'https://[^ ]*trycloudflare.com' tunnel.log | head -1)
@@ -102,49 +61,44 @@ jobs:
           done
 
           if [ -z "$URL" ]; then
-            echo "❌ Tunnel URL not found. Logs:"; cat tunnel.log; exit 1
+            echo "❌ Tunnel URL not found."; cat tunnel.log; exit 1
           fi
 
+          echo "$URL" > url.txt
           echo "🔗 Live URL: $URL"
-
-          # ─────────────────────────────────────────
-          # 💾 SAVE URL INTO url.txt + COMMIT & PUSH
-          # ─────────────────────────────────────────
-          {
-            echo "$URL"
-          } > url.txt
-
-          # Show on Actions summary page
-          echo "### 🚀 Lyra Builder is Live" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Builder URL:** $URL/" >> $GITHUB_STEP_SUMMARY
-          echo "**Started:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
-          echo "**Run:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-
-          # Commit + push url.txt (with retry, in case another run raced us)
-          git config --local user.name  "lyra-bot"
-          git config --local user.email "lyra-bot@users.noreply.github.com"
-
+          
           git add url.txt
-          if git diff --staged --quiet; then
-            echo "url.txt unchanged"
-          else
-            git commit -m "chore(url): update trycloudflare url [run #${{ github.run_number }}]"
-            for i in 1 2 3; do
-              git pull --rebase --autostash origin ${GITHUB_REF_NAME} && \
-              git push origin HEAD:${GITHUB_REF_NAME} && break || sleep 5
-            done
-          fi
+          git commit -m "chore: update url.txt [skip ci]" || echo "No changes"
+          git push origin ${GITHUB_REF_NAME} || echo "Push failed"
 
-          # Keep tunnel alive ~3h45m (15-min buffer before next run)
-          sleep 13500
-
-      # ─────────────────────────────────────────────
-      # 🧹 Graceful shutdown
-      # ─────────────────────────────────────────────
-      - name: Stop services
-        if: always()
+      - name: Auto-Sync to DB Branch
         run: |
-          [ -f tunnel.pid ] && kill $(cat tunnel.pid) 2>/dev/null || true
-          [ -f flask.pid  ] && kill $(cat flask.pid)  2>/dev/null || true
-          echo "Shutdown complete."
+          cat << 'EOF' > sync.sh
+          #!/bin/bash
+          while true; do
+            if [ -f data.json ]; then
+              cp data.json /tmp/latest_data.json
+              git fetch origin db 2>/dev/null || true
+              
+              if git show-ref --verify --quiet refs/remotes/origin/db; then
+                git checkout -B db origin/db
+              else
+                git checkout --orphan db
+                git rm -rf . > /dev/null 2>&1
+              fi
+              
+              cp /tmp/latest_data.json data.json
+              git add data.json
+              git commit -m "auto: update db [skip ci]" || echo "No changes"
+              git push origin db --force
+              
+              git checkout ${GITHUB_REF_NAME} -f
+            fi
+            sleep 60  # ✨ Ab har 1 minute baad sync hoga (pehle 300 tha) ✨
+          done
+          EOF
+          chmod +x sync.sh
+          nohup ./sync.sh > sync.log 2>&1 &
+
+      - name: Keep Alive
+        run: sleep 13500
